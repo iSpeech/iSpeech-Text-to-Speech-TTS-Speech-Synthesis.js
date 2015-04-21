@@ -1,4 +1,4 @@
-# Text to Speech
+# Text to Speech - TTS
 
 iSpeech's javascript text-to-speech apis.
 
@@ -23,4 +23,4 @@ tts.resume();
 ```
 For more information refer to the documentation in [doc/](doc/).
 
-To request a valid apiKey contact [sales@ispeech.org](sales@ispeech.org)
+To request a valid apiKey contact [dev@ispeech.org](dev@ispeech.org)
