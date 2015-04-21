@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="min/iSpeechTTS.min.js"></script>
+	</head>
+
+	<body>
+		<table>
+			<tr><td><h2>Text to Speech</h2></td></tr>
+			<tr>
+				<td>
+					<input id="ttsText" type="text" placeholder="Enter text to speak"></input>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button onclick="initTts()">InitTts</button>
+					<button onclick="startTts()">StartTts</button>
+					<button onclick="pauseTts()">PauseTts</button>
+					<button onclick="resumeTts()">ResumeTts</button>
+					<audio id="audioPlayer"></audio>
+				</td>
+			</tr>
+		</table>
+
+	</body>
+
+<script>
+
+initTts = function() {
+	audioPlayer = document.getElementById('audioPlayer');
+	tts = new iSpeechTTS(audioPlayer, {
+		apiKey: 'developerdemokeydeveloperdemokey',
+		voice: 'ukenglishfemale',
+		onEnded: function() {
+			console.log("TTS playback ended");
+		}
+	});
+}
+
+startTts = function() {
+	tts.speak(document.getElementById('ttsText').value);
+}
+
+pauseTts = function() {
+	tts.pause();
+}
+
+resumeTts = function() {
+	tts.resume();
+}
+
+</script>
+</html>
