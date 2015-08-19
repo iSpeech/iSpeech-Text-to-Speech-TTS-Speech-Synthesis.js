@@ -7,6 +7,7 @@
  * @param {audio} audioPlayer - audio tag to play audio on.
  * @param {object} param - parameters
  * @param {string} param.apiKey - iSpeech api key (defaults to developerdemokeydeveloperdemokey)
+ * @param {boolean} param.ssmlMode - process input as SSML (defaults to false)
  * @param {string} param.voice - iSpeech voice to speak in. (optional)
  * @param {function} param.onEnded - Callback for when the voice is done speaking. (optional)
  */
@@ -19,9 +20,13 @@ iSpeechTTS = function(audioPlayer, params) {
 	this.apiKey = params.apiKey || 'developerdemokeydeveloperdemokey';
 	this.voice = params.voice || null;
 	this.onEnded = params.onEnded || null;
+	this.ssmlMode = params.ssmlMode || false;
 
 	this.audioPlayer = audioPlayer;
 	this.audioPlayer.addEventListener('ended', this.onSegmentEnded.bind(this));
+	
+	this.urlList = [];
+	this.urlIndex = 0;
 }
 
 /**
@@ -34,7 +39,11 @@ iSpeechTTS.prototype.speak = function(text) {
 	this.urlList = [];
 	this.urlIndex = 0;
 
-	this.urlList = text.replace(/([^A-Z][a-z]+\.) /g, "$1\n").split("\n");
+	if(!this.ssmlMode) {
+		this.urlList = text.replace(/([^A-Z][a-z]+\.) /g, "$1\n").split("\n");
+	} else {
+		this.urlList.push(text);
+	}
 
 	for(var i = 0; i < this.urlList.length; i++) {
 		this.urlList[i] = this.createUrl(this.urlList[i]);
@@ -48,8 +57,8 @@ iSpeechTTS.prototype.speak = function(text) {
 iSpeechTTS.prototype.createUrl = function(text) {
 	var url = this.endpoint +
 		'?apikey=' + this.apiKey +
-		'&action=convert' +
-		'&text=' + encodeURI(text);
+		'&action=' + (this.ssmlMode ? 'ssml' : 'convert') +
+		'&' + (this.ssmlMode ? 'ssml' : 'text') + '=' + encodeURI(text);
 
 	if(!!this.voice)
 		url += "&voice=" + encodeURI(this.voice);
@@ -99,4 +108,13 @@ iSpeechTTS.prototype.onSegmentEnded = function() {
 		if(!!this.onEnded)
 			this.onEnded(arguments[0]);
 	}
+}
+
+/**
+ * Enable or disable processing input as SSML
+ *
+ * @param {boolean} isSsml - Enable or disable SSML
+ */
+iSpeechTTS.prototype.setInputAsSSML = function(isSsml) {
+	this.ssmlMode = !!isSsml;
 }
